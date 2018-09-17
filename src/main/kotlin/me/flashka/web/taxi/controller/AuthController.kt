@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*
 import javax.validation.Valid
 
 @RestController
+@RequestMapping(value = ["/auth"])
 class AuthController(
         private val userService: UserService,
         private val authenticationManager: AuthenticationManager,
