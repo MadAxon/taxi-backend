@@ -49,7 +49,13 @@ data class UserModel(
 
         @ManyToOne
         @JoinColumn(name = "roleId")
-        var role: RoleModel = RoleModel()) {
+        var role: RoleModel = RoleModel(),
+
+        val registerDate: Date = Date(),
+
+        var weight: Double = 1.0,
+
+        var balance: Int? = 0) {
 
     constructor() : this(0, "", "", "", ""
             , CityModel(0, ""), Date(), "", "")

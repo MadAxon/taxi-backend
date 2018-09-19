@@ -15,20 +15,24 @@ data class OfferModel(
         @GeneratedValue
         val id: Long = 0,
 
-        @JsonFormat(pattern = "dd.MM.yyyy HH:mm")
+        @JsonFormat(pattern = "dd.MM.yyyy HH:mm", timezone = "GMT+03:00")
         @field:NotNull(message = "Укажите дату и время начала акции")
-        val startDate: Date,
+        val startDate: Date?,
 
-        @JsonFormat(pattern = "dd.MM.yyyy HH:mm")
+        @JsonFormat(pattern = "dd.MM.yyyy HH:mm", timezone = "GMT+03:00")
         @field:NotNull(message = "Укажите дату и время конца акции")
-        val endDate: Date,
+        val endDate: Date?,
 
         @field:NotNull(message = "Укажите сумму выигрыша")
         @field:Min(0, message = "Сумма выигрыша не может быть отрицательной")
-        val win: Int,
+        val win: Int?,
 
         @field:NotNull(message = "Укажите сумму участия в акции")
         @field:Min(0, message = "Сумма участия не может быть отрицательной")
-        val payment: Int
+        val payment: Int?,
 
-)
+        var active: Boolean = true
+
+) {
+        constructor() : this(0 ,null, null, 0, 0)
+}

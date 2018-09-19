@@ -44,7 +44,7 @@ class WebSecurityConfig(
                 ?.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 ?.and()
                 ?.authorizeRequests()
-                ?.antMatchers("/resources/**", "/registration", "/login")
+                ?.antMatchers("/resources/**", "/auth/registration", "/auth/login")
                 ?.permitAll()?.anyRequest()?.authenticated()
                 ?.and()
                 ?.logout()
