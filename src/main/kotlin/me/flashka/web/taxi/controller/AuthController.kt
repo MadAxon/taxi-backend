@@ -4,6 +4,7 @@ import me.flashka.web.taxi.jwt.JwtTokenProvider
 import me.flashka.web.taxi.repository.model.BaseModel
 import me.flashka.web.taxi.repository.model.UserModel
 import me.flashka.web.taxi.repository.request.LoginRequest
+import me.flashka.web.taxi.repository.request.PasswordChangingRequest
 import me.flashka.web.taxi.service.UserDetailServiceImpl
 import me.flashka.web.taxi.service.UserService
 import org.springframework.http.HttpStatus
@@ -11,6 +12,7 @@ import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.BadCredentialsException
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.context.SecurityContextHolder
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.validation.BindingResult
 import org.springframework.web.bind.annotation.*
 import javax.validation.Valid

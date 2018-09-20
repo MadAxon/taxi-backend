@@ -53,6 +53,7 @@ data class UserModel(
 
         val registerDate: Date = Date(),
 
+        @JsonIgnore
         var weight: Double = 1.0,
 
         var balance: Int? = 0) {

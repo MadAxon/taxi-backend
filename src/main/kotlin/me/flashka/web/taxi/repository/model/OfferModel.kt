@@ -2,9 +2,7 @@ package me.flashka.web.taxi.repository.model
 
 import com.fasterxml.jackson.annotation.JsonFormat
 import java.util.*
-import javax.persistence.Entity
-import javax.persistence.GeneratedValue
-import javax.persistence.Id
+import javax.persistence.*
 import javax.validation.constraints.Min
 import javax.validation.constraints.NotNull
 
@@ -30,6 +28,11 @@ data class OfferModel(
         @field:NotNull(message = "Укажите сумму участия в акции")
         @field:Min(0, message = "Сумма участия не может быть отрицательной")
         val payment: Int?,
+
+        @ManyToOne
+        @JoinColumn(name = "cityId")
+        @field:NotNull(message = "Укажите город")
+        val city: CityModel? = null,
 
         var active: Boolean = true
 

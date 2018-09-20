@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service
 import org.springframework.scheduling.concurrent.ConcurrentTaskScheduler
 import java.util.*
 import java.util.concurrent.Executors
+import kotlin.collections.ArrayList
 
 
 @Service
@@ -21,14 +22,22 @@ class TimerService(
         val userRepository: UserRepository
 ) {
 
-    var offerId: Long = 0
+    var offerIdList: MutableList<Long> = ArrayList()
 
     val logger: Logger = LoggerFactory.getLogger(TimerService::class.java)
 
     val runnable: Runnable = Runnable {
         kotlin.run {
-            selectWinner(offerId)
-            runTimer()
+            val offers = offerRepository.findAllByActiveOrderByEndDateAsc(true)
+            if (offers.isNotEmpty())
+                offers.forEach {
+                    if (!it.endDate?.after(Date())!!) {
+                        selectWinner(it.id)
+                        runTimer()
+                        offerIdList.remove(it.id)
+                        return@Runnable
+                    }
+                }
         }
     }
 
@@ -38,12 +47,10 @@ class TimerService(
         if (offers.isNotEmpty()) {
             val scheduler = ConcurrentTaskScheduler(Executors.newSingleThreadScheduledExecutor())
             offers.forEach {
-                if (it.endDate?.after(Date())!!) {
-                    if (offerId != it.id) {
-                        offerId = it.id
-                        scheduler.schedule(runnable, it.endDate)
-                        logger.info("endDate is {}", it.endDate)
-                    }
+                if (it.endDate?.after(Date())!! && !offerIdList.contains(it.id)) {
+                    offerIdList.add(it.id)
+                    scheduler.schedule(runnable, it.endDate)
+                    logger.info("endDate is {}", it.endDate)
                     return
                 }
                 selectWinner(it.id)
