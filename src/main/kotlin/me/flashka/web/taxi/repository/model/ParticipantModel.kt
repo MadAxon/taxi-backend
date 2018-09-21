@@ -1,7 +1,6 @@
 package me.flashka.web.taxi.repository.model
 
 import com.fasterxml.jackson.annotation.JsonFormat
-import com.fasterxml.jackson.annotation.JsonIgnore
 import java.util.*
 import javax.persistence.*
 import javax.validation.constraints.NotNull

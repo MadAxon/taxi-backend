@@ -1,6 +1,7 @@
 package me.flashka.web.taxi.controller
 
 import me.flashka.web.taxi.repository.OfferRepository
+import me.flashka.web.taxi.repository.dto.FrontOfferDTO
 import me.flashka.web.taxi.repository.model.BaseModel
 import me.flashka.web.taxi.repository.model.CityModel
 import me.flashka.web.taxi.repository.model.OfferModel
@@ -35,10 +36,20 @@ class OfferController(
     }
 
     @PostMapping("/get_list")
-    fun get(@RequestBody offerRequest: OfferRequest?): BaseModel<List<OfferModel>> {
+    fun getOffers(@RequestBody offerRequest: OfferRequest?): BaseModel<List<OfferModel>> {
         return if (offerRequest?.cityId == null || offerRequest.cityId == 0L)
             BaseModel(200, "", offerRepository.findAll())
         else BaseModel(200, "", offerRepository.findAllByCity(CityModel(offerRequest.cityId)))
+    }
+
+    @GetMapping("/user/get_list")
+    fun getUserOffers(): BaseModel<List<FrontOfferDTO>> {
+        val userOffers = offerRepository.findAllByActiveOrderByEndDateAsc(true)
+        val offers = ArrayList<FrontOfferDTO>()
+        userOffers.forEach {
+            offers.add(FrontOfferDTO(it))
+        }
+        return BaseModel(200, "", offers)
     }
 
 }

@@ -1,6 +1,7 @@
 package me.flashka.web.taxi.repository.model
 
 import com.fasterxml.jackson.annotation.JsonFormat
+import me.flashka.web.taxi.repository.enums.WinnerStatus
 import java.util.*
 import javax.persistence.*
 import javax.validation.constraints.Min
@@ -31,10 +32,14 @@ data class OfferModel(
 
         @ManyToOne
         @JoinColumn(name = "cityId")
-        @field:NotNull(message = "Укажите город")
+        @field:NotNull(message = "Укажите город проведения акции")
         val city: CityModel? = null,
 
-        var active: Boolean = true
+        @Enumerated(EnumType.STRING)
+        var winnerStatus: WinnerStatus = WinnerStatus.WINNER_PENDING,
+
+        var active: Boolean = true,
+        var participants: Int = 0
 
 ) {
         constructor() : this(0 ,null, null, 0, 0)

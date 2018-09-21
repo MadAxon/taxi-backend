@@ -37,7 +37,7 @@ class AuthController(
                     , loginRequest.password, userDetails.authorities))
             SecurityContextHolder.getContext().authentication = authentication
             val jwt = tokenProvider.generateToken(userDetails)
-            return BaseModel(0, "", jwt)
+            return BaseModel(200, "", jwt)
         }
         return BaseModel(400, "Номер телефона не зарегистрирован")
     }
