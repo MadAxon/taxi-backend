@@ -1,6 +1,7 @@
 package me.flashka.web.taxi.repository.model
 
 import com.fasterxml.jackson.annotation.JsonFormat
+import org.springframework.format.annotation.DateTimeFormat
 import java.util.*
 import javax.persistence.*
 import javax.validation.constraints.NotNull
@@ -13,6 +14,7 @@ data class ParticipantModel(
         val id: Long = 0,
 
         @JsonFormat(pattern = "dd.MM.yyyy HH:mm")
+        @DateTimeFormat(pattern = "dd.MM.yyyy HH:mm")
         val date: Date = Date(),
 
         @OneToOne

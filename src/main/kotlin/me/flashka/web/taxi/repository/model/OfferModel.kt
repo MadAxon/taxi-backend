@@ -16,19 +16,19 @@ data class OfferModel(
 
         @JsonFormat(pattern = "dd.MM.yyyy HH:mm", timezone = "GMT+03:00")
         @field:NotNull(message = "Укажите дату и время начала акции")
-        val startDate: Date?,
+        val startDate: Date? = null,
 
         @JsonFormat(pattern = "dd.MM.yyyy HH:mm", timezone = "GMT+03:00")
         @field:NotNull(message = "Укажите дату и время конца акции")
-        val endDate: Date?,
+        val endDate: Date? = null,
 
         @field:NotNull(message = "Укажите сумму выигрыша")
         @field:Min(0, message = "Сумма выигрыша не может быть отрицательной")
-        val win: Int?,
+        val win: Int? = null,
 
         @field:NotNull(message = "Укажите сумму участия в акции")
         @field:Min(0, message = "Сумма участия не может быть отрицательной")
-        val payment: Int?,
+        val payment: Int? = null,
 
         @ManyToOne
         @JoinColumn(name = "cityId")
@@ -42,5 +42,5 @@ data class OfferModel(
         var participants: Int = 0
 
 ) {
-        constructor() : this(0 ,null, null, 0, 0)
+        constructor() : this(0 )
 }

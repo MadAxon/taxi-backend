@@ -11,6 +11,7 @@ import me.flashka.web.taxi.repository.model.OfferModel
 import org.springframework.security.access.annotation.Secured
 import org.springframework.validation.BindingResult
 import org.springframework.web.bind.annotation.*
+import org.springframework.web.servlet.ModelAndView
 import javax.validation.Valid
 
 @RestController
@@ -21,7 +22,7 @@ class HistoryController(
         private val historyRepository: HistoryRepository
 ) {
 
-    @GetMapping("/user/get_list")
+    @GetMapping("/get_list")
     fun getUserHistory(@RequestHeader("Authorization") token: String): BaseModel<List<HistoryOnly>> {
         val phoneNumber = tokenProvider.phoneNumberFromJWT(token.substring(7))
         val userModel = userRepository.findByPhoneNumber(phoneNumber)
@@ -29,10 +30,10 @@ class HistoryController(
         else BaseModel(400, "Не удалось заполучить историю пользователя. Возможно, он был удален")
     }
 
-    @GetMapping("/get_list")
-    @Secured("ROLE_ADMIN")
-    fun getHistory(): BaseModel<List<HistoryModel>> {
-        return BaseModel(200, "", historyRepository.findAll())
+    @GetMapping("/get_list_admin")
+    //@Secured("ROLE_ADMIN")
+    fun getHistory(): ModelAndView {
+        return ModelAndView("history_form", "histories", historyRepository.findAll())
     }
 
     @PostMapping("/set")

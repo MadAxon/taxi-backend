@@ -10,6 +10,7 @@ import org.springframework.security.access.annotation.Secured
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.validation.BindingResult
 import org.springframework.web.bind.annotation.*
+import org.springframework.web.servlet.ModelAndView
 import javax.validation.Valid
 
 @RestController
@@ -21,9 +22,9 @@ class UserController(
         ) {
 
     @GetMapping("/get_list")
-    @Secured("ROLE_ADMIN")
-    fun getUsers(): BaseModel<List<UserModel>> {
-        return BaseModel(200, "", userRepository.findAll())
+    //@Secured("ROLE_ADMIN")
+    fun getUsers(): ModelAndView {
+        return ModelAndView("user_form", "users", userRepository.findAll())
     }
 
     @PostMapping("/update")

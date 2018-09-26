@@ -8,6 +8,8 @@ import org.springframework.lang.Nullable
 
 interface ParticipantRepository : JpaRepository<ParticipantModel, Long> {
 
+    fun findAllByOfferOrderByDateDesc(offer: OfferModel): List<ParticipantModel>
+
     fun findAllByOffer(offer: OfferModel): List<UserOnly>
 
     fun findByUserAndOffer(user: UserModel, offer: OfferModel): ParticipantModel

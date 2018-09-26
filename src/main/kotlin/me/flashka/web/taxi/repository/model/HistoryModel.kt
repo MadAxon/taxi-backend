@@ -15,18 +15,18 @@ data class HistoryModel(
         @OneToOne
         @JoinColumn(name = "userId")
         @field:NotNull(message = "Операция не может быть совершена без указания пользователя")
-        val user: UserModel?,
+        val user: UserModel? = null,
 
-        @field:NotNull(message = "Укажите сумму оплаты/вывода/выигрыша полльзователя")
-        val amount: Int?,
-        val name: String?,
-        val number: String?,
+        @field:NotNull(message = "Укажите сумму оплаты/вывода/выигрыша пользователя")
+        val amount: Int? = null,
+        val name: String? = null,
+        val number: String? = null,
         val commission: Int = 0,
         val date: Date = Date(),
 
         @Enumerated(EnumType.STRING)
         @field:NotNull(message = "Укажите статус операции")
-        val historyStatus: HistoryStatus?
+        val historyStatus: HistoryStatus? = null
 ) {
     constructor(user: UserModel?, amount: Int?, name: String?, number: String?, historyStatus: HistoryStatus?)
             : this(0, user, amount, name, number, 0, Date(), historyStatus)

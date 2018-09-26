@@ -2,6 +2,7 @@ package me.flashka.web.taxi.controller
 
 import me.flashka.web.taxi.jwt.JwtTokenProvider
 import me.flashka.web.taxi.repository.model.BaseModel
+import me.flashka.web.taxi.repository.model.OfferModel
 import me.flashka.web.taxi.repository.model.UserModel
 import me.flashka.web.taxi.repository.request.LoginRequest
 import me.flashka.web.taxi.repository.request.PasswordChangingRequest
@@ -13,8 +14,12 @@ import org.springframework.security.authentication.BadCredentialsException
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
+import org.springframework.ui.ModelMap
 import org.springframework.validation.BindingResult
 import org.springframework.web.bind.annotation.*
+import org.springframework.web.servlet.ModelAndView
+import javax.servlet.http.Cookie
+import javax.servlet.http.HttpServletResponse
 import javax.validation.Valid
 
 @RestController
@@ -39,7 +44,29 @@ class AuthController(
             val jwt = tokenProvider.generateToken(userDetails)
             return BaseModel(200, "", jwt)
         }
-        return BaseModel(400, "Номер телефона не зарегистрирован")
+        return BaseModel(401, "Неверный номер или пароль")
+    }
+
+    @GetMapping("/login_form")
+    fun showLoginForm(): ModelAndView {
+        return ModelAndView("login_form", "loginRequest", LoginRequest())
+    }
+
+    @PostMapping("/login_form/send")
+    fun loginAsAdmin(@Valid @ModelAttribute("loginRequest")loginRequest: LoginRequest, bindingResult: BindingResult
+                     , modelMap: ModelMap, httpServletResponse: HttpServletResponse): ModelAndView {
+        if (bindingResult.hasErrors() && bindingResult.fieldErrors[0].defaultMessage != null) {
+            modelMap.addAttribute("error", bindingResult.fieldErrors[0].defaultMessage!!)
+            return ModelAndView("login_form", "loginRequest", loginRequest)
+        }
+        val baseModel = login(loginRequest, bindingResult)
+        return if (baseModel.status == 200) {
+            return ModelAndView("redirect:/offer/main_form", "offers", ArrayList<OfferModel>())
+        }
+        else {
+            modelMap.addAttribute("statusText", baseModel.statusText)
+            return ModelAndView("login_form", "loginRequest", loginRequest)
+        }
     }
 
     @PostMapping("/registration")

@@ -2,16 +2,18 @@ package me.flashka.web.taxi.repository.request
 
 import javax.validation.constraints.NotNull
 import javax.validation.constraints.Pattern
+import javax.validation.constraints.Size
 
 class LoginRequest (
 
         @field:Pattern(regexp = "^[+\\s]?[7-8\\s]?\\(?([0-9]{3})\\)?[-.\\s]?([0-9]{3})[-.\\s]?([0-9]{4})\$"
                 , message = "Неправильный формат номера")
         @field:NotNull(message = "Укажите номер телефона")
-        val phoneNumber: String?,
+        val phoneNumber: String? = null,
 
         @field:NotNull(message = "Укажите пароль")
-        val password: String?
+        @field:Size(min = 1, message = "Укажите пароль")
+        val password: String? = null
 
 ) {
 

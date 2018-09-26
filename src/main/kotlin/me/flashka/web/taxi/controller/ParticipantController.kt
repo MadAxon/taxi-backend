@@ -4,9 +4,11 @@ import me.flashka.web.taxi.repository.OfferRepository
 import me.flashka.web.taxi.repository.ParticipantRepository
 import me.flashka.web.taxi.repository.dto.FrontWinnerDTO
 import me.flashka.web.taxi.repository.model.BaseModel
+import me.flashka.web.taxi.repository.model.OfferModel
 import me.flashka.web.taxi.repository.model.ParticipantModel
 import org.springframework.validation.BindingResult
 import org.springframework.web.bind.annotation.*
+import org.springframework.web.servlet.ModelAndView
 import javax.validation.Valid
 
 @RestController
@@ -16,12 +18,16 @@ class ParticipantController(
         val offerRepository: OfferRepository
 ) {
 
-    @GetMapping("/user/get_list")
-    fun getUsers(): BaseModel<List<ParticipantModel>> {
-        return BaseModel(200, "", participantRepository.findAll())
+    @GetMapping("/participant_form")
+    fun getUsers(@RequestParam("id") id: Long): ModelAndView {
+        val modelAndView = ModelAndView("participant_form")
+        val participants = participantRepository.findAllByOfferOrderByDateDesc(OfferModel(id))
+        modelAndView.addObject("participants", participants)
+        if (participants.isNotEmpty()) modelAndView.addObject("offerModel", participants[0].offer!!)
+        return modelAndView
     }
 
-    @PostMapping("/user/set")
+    @PostMapping("/set")
     fun setUser(@Valid @RequestBody participantModel: ParticipantModel, bindingResult: BindingResult): BaseModel<Any> {
         if (bindingResult.hasErrors() && bindingResult.fieldErrors[0].defaultMessage != null)
             return BaseModel(400, bindingResult.fieldErrors[0].defaultMessage!!)

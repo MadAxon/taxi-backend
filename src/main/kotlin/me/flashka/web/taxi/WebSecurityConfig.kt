@@ -3,7 +3,6 @@ package me.flashka.web.taxi
 import me.flashka.web.taxi.jwt.JwtAuthenticationFilter
 import me.flashka.web.taxi.jwt.JwtAuthenticationEntryPoint
 import me.flashka.web.taxi.jwt.JwtTokenProvider
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -37,12 +36,12 @@ class WebSecurityConfig(
                 ?.csrf()?.disable()
                 ?.exceptionHandling()
                 ?.authenticationEntryPoint(authenticationEntryPoint())
-                ?.and()
+                /*?.and()
                 ?.sessionManagement()
-                ?.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                ?.sessionCreationPolicy(SessionCreationPolicy.STATELESS)*/
                 ?.and()
                 ?.authorizeRequests()
-                ?.antMatchers("/resources/**", "/auth/registration", "/auth/login")
+                ?.antMatchers("/resources/**", "/auth/**")
                 ?.permitAll()?.anyRequest()?.authenticated()
                 ?.and()
                 ?.logout()

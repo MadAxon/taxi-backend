@@ -64,27 +64,26 @@ class TimerService(
 
     fun selectWinner(offerId: Long) {
         val offerModel = offerRepository.findById(offerId).get()
+        offerModel.active = false
 
         val userOnlyList = participantRepository.findAllByOffer(offerModel)
         if (userOnlyList.isNotEmpty()) {
             val userModel = RandomCollection().next(userOnlyList)
             val participantModel = participantRepository.findByUserAndOffer(userModel, offerModel)
 
-            offerModel.active = false
-            offerRepository.save(offerModel)
+            offerModel.winnerStatus = WinnerStatus.WINNER_EXISTS
 
             userModel.balance = userModel.balance!! + offerModel.win!!
             userModel.weight = 0.5
             userRepository.save(userModel)
 
             participantModel.winner = true
-            offerModel.winnerStatus = WinnerStatus.WINNER_EXISTS
             participantRepository.save(participantModel)
 
             historyRepository.save(HistoryModel(userModel, offerModel.win, offerId.toString()
                     , null, HistoryStatus.OFFER_WINNER))
         } else offerModel.winnerStatus = WinnerStatus.WINNER_DOESNT_EXIST
-
+        offerRepository.save(offerModel)
     }
 
 }
