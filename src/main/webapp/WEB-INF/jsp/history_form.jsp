@@ -17,24 +17,35 @@
             text-align: center;
             border-bottom: 1px solid #ddd;
         }
+
+        thead {
+            background-color: #f5eee2;
+            color: #504f4d;
+            font-weight: bold;
+            cursor: default;
+        }
     </style>
 </head>
 <body>
 <button type="button" name="back" onclick="window.history.back()"><- Назад</button>
 <h2>История всех транзакций</h2>
 <table>
+    <thead>
     <tr>
-        <td>id</td>
-        <td>id участника</td>
-        <td>ФИО пользователя</td>
-        <td>№ телефона пользователя</td>
-        <td>Сумма оплаты/вывода/выигрыша</td>
-        <td>Наименование провайдера/№ акции</td>
-        <td>№ счета/чека</td>
-        <td>Комиссия</td>
-        <td>Дата проведение транзакции</td>
-        <td>Статус операции</td>
+        <th>id</th>
+        <th>id участника</th>
+        <th>ФИО пользователя</th>
+        <th>№ телефона пользователя</th>
+        <th>Сумма оплаты/вывода/выигрыша</th>
+        <th>Наименование провайдера/№ акции</th>
+        <th>№ счета/чека</th>
+        <th>Комиссия</th>
+        <th>Дата проведение транзакции</th>
+        <th>Статус операции</th>
+        <th>Тип операции</th>
     </tr>
+    </thead>
+    <tbody>
     <c:forEach items="${histories}" var="historyModel">
         <tr>
             <td><c:out value="${historyModel.id}"/></td>
@@ -46,9 +57,11 @@
             <td><c:out value="${historyModel.number}"/></td>
             <td><c:out value="${historyModel.commission}"/></td>
             <td><fmt:formatDate value="${historyModel.date}" pattern="dd.MM.yyyy HH:mm:ss"/></td>
-            <td><c:out value="${historyModel.historyStatus}"/></td>
+            <td><c:out value="${historyModel.transactionStatus}"/></td>
+            <td><c:out value="${historyModel.transactionType}"/></td>
         </tr>
     </c:forEach>
+    </tbody>
 </table>
 </body>
 <script>

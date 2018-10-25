@@ -1,6 +1,7 @@
 package me.flashka.web.taxi.repository.model
 
-import me.flashka.web.taxi.repository.enums.HistoryStatus
+import me.flashka.web.taxi.repository.enums.TransactionStatus
+import me.flashka.web.taxi.repository.enums.TransactionType
 import java.util.*
 import javax.persistence.*
 import javax.validation.constraints.NotNull
@@ -18,16 +19,22 @@ data class HistoryModel(
         val user: UserModel? = null,
 
         @field:NotNull(message = "Укажите сумму оплаты/вывода/выигрыша пользователя")
-        val amount: Int? = null,
+        val amount: Double? = null,
         val name: String? = null,
         val number: String? = null,
-        val commission: Int = 0,
+        val commission: Double = 0.0,
         val date: Date = Date(),
 
         @Enumerated(EnumType.STRING)
-        @field:NotNull(message = "Укажите статус операции")
-        val historyStatus: HistoryStatus? = null
+        @field:NotNull(message = "Не указан статус операции")
+        val transactionStatus: TransactionStatus? = null,
+
+        @Enumerated(EnumType.STRING)
+        @field:NotNull(message = "Не указан тип операции")
+        val transactionType: TransactionType? = null
+
 ) {
-    constructor(user: UserModel?, amount: Int?, name: String?, number: String?, historyStatus: HistoryStatus?)
-            : this(0, user, amount, name, number, 0, Date(), historyStatus)
+    constructor(user: UserModel?, amount: Double?, name: String?, number: String?, commission: Double, transactionStatus: TransactionStatus?
+                , transactionType: TransactionType?)
+            : this(0, user, amount, name, number, commission, Date(), transactionStatus, transactionType)
 }

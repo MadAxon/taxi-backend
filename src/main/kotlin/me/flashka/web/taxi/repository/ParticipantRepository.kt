@@ -16,4 +16,6 @@ interface ParticipantRepository : JpaRepository<ParticipantModel, Long> {
 
     fun existsByUserAndOffer(user: UserModel, offer: OfferModel): Boolean
 
+    fun findAllByWinner(boolean: Boolean): List<ParticipantModel>
+
 }

@@ -41,7 +41,13 @@ class WebSecurityConfig(
                 ?.sessionCreationPolicy(SessionCreationPolicy.STATELESS)*/
                 ?.and()
                 ?.authorizeRequests()
-                ?.antMatchers("/resources/**", "/auth/**")
+                ?.antMatchers(
+                        "/resources/**", "/auth/**",
+                        "/city/get_list",
+                        "/payment/notify",
+                        "/payment/success",
+                        "/payment/failure",
+                        "/payout/pay_systems/get_list")
                 ?.permitAll()?.anyRequest()?.authenticated()
                 ?.and()
                 ?.logout()

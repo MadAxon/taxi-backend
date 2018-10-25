@@ -11,7 +11,6 @@ import javax.validation.constraints.NotNull
 import javax.validation.constraints.Pattern
 import javax.validation.constraints.Size
 import kotlin.collections.HashSet
-import kotlin.jvm.Transient
 
 @Entity
 data class UserModel(
@@ -26,22 +25,24 @@ data class UserModel(
         var phoneNumber: String?,
 
         @field:NotNull(message = "Укажите Ваше имя")
-        val firstName: String?,
+        var firstName: String?,
 
         @field:NotNull(message = "Укажите Вашу фамилию")
-        val lastName: String?,
-        val patronymic: String? = "",
+        var lastName: String?,
+        var patronymic: String? = "",
 
         @ManyToOne
         @JoinColumn(name = "cityId")
         @field:NotNull(message = "Укажите город")
-        val city: CityModel? = null,
+        var city: CityModel? = null,
 
         @JsonFormat(pattern = "dd.MM.yyyy")
         val birthDate: Date? = null,
 
         @field:NotNull(message = "Укажите Ваш номер машины")
-        val carNumber: String?,
+        @field:Pattern(regexp = "^[А-Яа-я][\\s]*[0-9]{3}[\\s]*[А-Яа-я]{2}[\\s]*[0-9]{2,3}\$"
+                , message = "Неверный формат номера машины")
+        var carNumber: String?,
 
         @JsonIgnore
         @JsonSetter
@@ -49,6 +50,7 @@ data class UserModel(
 
         @ManyToOne
         @JoinColumn(name = "roleId")
+        @JsonIgnore
         var role: RoleModel = RoleModel(),
 
         val registerDate: Date = Date(),
@@ -56,7 +58,7 @@ data class UserModel(
         @JsonIgnore
         var weight: Double = 1.0,
 
-        var balance: Int? = 0) {
+        var balance: Double = 0.0) {
 
     constructor() : this(0, "", "", "", ""
             , CityModel(0, ""), Date(), "", "")
@@ -75,5 +77,14 @@ data class UserModel(
 
             return string
         }
+
+    @Transient
+    @JsonIgnore
+    var _carNumber: String? = carNumber
+    get() {
+        var string: String? = carNumber
+        string = string?.replace("\\s+".toRegex(), "")
+        return string?.toUpperCase()
+    }
 
 }

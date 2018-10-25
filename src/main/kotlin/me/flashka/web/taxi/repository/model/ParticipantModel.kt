@@ -15,7 +15,7 @@ data class ParticipantModel(
 
         @JsonFormat(pattern = "dd.MM.yyyy HH:mm")
         @DateTimeFormat(pattern = "dd.MM.yyyy HH:mm")
-        val date: Date = Date(),
+        var date: Date = Date(),
 
         @OneToOne
         @JoinColumn(name = "userId")
@@ -29,4 +29,7 @@ data class ParticipantModel(
 
         var winner: Boolean = false
 
-)
+) {
+        constructor(offer: OfferModel?, user: UserModel?) : this(0, Date(), user, offer, false)
+
+}

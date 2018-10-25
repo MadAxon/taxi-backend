@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service
 import java.nio.charset.Charset
 import java.util.*
 import org.apache.commons.lang3.RandomStringUtils
+import org.apache.logging.log4j.LogManager
 import java.security.SecureRandom
 
 
@@ -17,15 +18,17 @@ class UserServiceImpl(
         private val roleRepository: RoleRepository,
         private val bCryptPasswordEncoder: BCryptPasswordEncoder
 ) : UserService {
-    override fun save(user: UserModel): Boolean {
-        if (!userRepository.existsByPhoneNumber(user._phoneNumber)) {
-            user.phoneNumber = user._phoneNumber
-            user.password = bCryptPasswordEncoder.encode(generatePassword())
-            user.role = roleRepository.findById(2).get()
-            userRepository.save(user)
-            return true
-        }
-        return false
+
+    val logger = LogManager.getLogger(UserServiceImpl::class)
+
+    override fun save(user: UserModel): String {
+        user.phoneNumber = user._phoneNumber
+        user.carNumber = user._carNumber
+        val generatedPassword = generatePassword()
+        user.password = bCryptPasswordEncoder.encode(generatedPassword)
+        user.role = roleRepository.findById(2).get()
+        userRepository.save(user)
+        return generatedPassword
     }
 
     override fun findByPhoneNumber(phoneNumber: String?): UserModel? {
@@ -33,15 +36,13 @@ class UserServiceImpl(
     }
 
     private fun generatePassword(): String {
-        val possibleCharacters = StringBuilder("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789")
+        val possibleCharacters = StringBuilder("0123456789")
                 .toString().toCharArray()
-        val generatedPassword = RandomStringUtils.random(6, 0, possibleCharacters.size - 1
+        return RandomStringUtils.random(6, 0, possibleCharacters.size - 1
                 , false
                 , false
                 , possibleCharacters
                 , SecureRandom())
-
-        return generatedPassword
     }
 
 }

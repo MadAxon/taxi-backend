@@ -17,24 +17,34 @@
             text-align: center;
             border-bottom: 1px solid #ddd;
         }
+
+        thead {
+            background-color: #f5eee2;
+            color: #504f4d;
+            font-weight: bold;
+            cursor: default;
+        }
     </style>
 </head>
 <body>
 <button type="button" name="back" onclick="window.history.back()"><- Назад</button>
 <h3>Пользователи в системе</h3>
 <table>
+    <thead>
     <tr>
-        <td>id</td>
-        <td>№ телефона</td>
-        <td>Имя</td>
-        <td>Фамилия</td>
-        <td>Отчество</td>
-        <td>Город</td>
-        <td>Дата рождения</td>
-        <td>Номер машины</td>
-        <td>Дата регистрации</td>
-        <td>Баланс</td>
+        <th>id</th>
+        <th>№ телефона</th>
+        <th>Имя</th>
+        <th>Фамилия</th>
+        <th>Отчество</th>
+        <th>Город</th>
+        <th>Дата рождения</th>
+        <th>Номер машины</th>
+        <th>Дата регистрации</th>
+        <th>Баланс</th>
     </tr>
+    </thead>
+    <tbody>
     <c:forEach items="${users}" var="userModel">
         <tr>
             <td><c:out value="${userModel.id}"/></td>
@@ -49,6 +59,7 @@
             <td><c:out value="${userModel.balance}"/></td>
         </tr>
     </c:forEach>
+    </tbody>
 </table>
 </body>
 <script>

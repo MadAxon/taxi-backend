@@ -14,8 +14,8 @@ data class FrontOfferDTO(
         val id: Long? = offer?.id,
         val startDate: Date? = offer?.startDate,
         val endDate: Date? = offer?.endDate,
-        val win: Int? = offer?.win,
-        val payment: Int? = offer?.payment,
+        val win: Double? = offer?.win,
+        val payment: Double? = offer?.payment,
         val participants: Int? = offer?.participants,
 
         @Enumerated(EnumType.STRING)

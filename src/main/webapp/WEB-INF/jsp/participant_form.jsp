@@ -17,21 +17,33 @@
             text-align: center;
             border-bottom: 1px solid #ddd;
         }
+
+        thead {
+            background-color: #f5eee2;
+            color: #504f4d;
+            font-weight: bold;
+            cursor: default;
+        }
     </style>
 </head>
 <body>
 <button type="button" name="back" onclick="window.history.back()"><- Назад</button>
 <h3>Участники в акции</h3>
-<h5 style="color:slategray">Акция № ${offerModel.id} с ${offerModel.startDate} по ${offerModel.endDate}</h5>
+<h5 style="color:slategray">
+    Акция № ${offerModel.id} с <fmt:formatDate value="${offerModel.startDate}" pattern="dd.MM.yyyy HH:mm"/>
+     по <fmt:formatDate value="${offerModel.endDate}" pattern="dd.MM.yyyy HH:mm"/></h5>
 <table>
+    <thead>
     <tr>
-        <td>id</td>
-        <td>Дата вступления в акцию</td>
-        <td>id участника</td>
-        <td>ФИО участника</td>
-        <td>№ телефона участника</td>
-        <td>Статус выигрыша</td>
+        <th>id</th>
+        <th>Дата вступления в акцию</th>
+        <th>id участника</th>
+        <th>ФИО участника</th>
+        <th>№ телефона участника</th>
+        <th>Статус участника</th>
     </tr>
+    </thead>
+    <tbody>
     <c:forEach items="${participants}" var="participantModel">
         <tr>
             <td><c:out value="${participantModel.id}"/></td>
@@ -41,9 +53,16 @@
              ${participantModel.user.firstName}
              ${participantModel.user.patronymic}"/></td>
             <td><c:out value="${participantModel.user.phoneNumber}"/></td>
-            <td><c:out value="${participantModel.winner}"/></td>
+            <td><c:choose>
+                <c:when test="${participantModel.winner}">
+                    <span style="color: green;">Победитель</span></c:when>
+                <c:otherwise>
+                    <span style="color: red;">Проигравший</span>
+                </c:otherwise>
+            </c:choose></td>
         </tr>
     </c:forEach>
+    </tbody>
 </table>
 </body>
 <script>

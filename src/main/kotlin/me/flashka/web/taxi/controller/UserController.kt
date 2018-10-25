@@ -5,6 +5,7 @@ import me.flashka.web.taxi.repository.UserRepository
 import me.flashka.web.taxi.repository.model.BaseModel
 import me.flashka.web.taxi.repository.model.UserModel
 import me.flashka.web.taxi.repository.request.PasswordChangingRequest
+import me.flashka.web.taxi.repository.request.UserUpdateRequest
 import me.flashka.web.taxi.service.UserService
 import org.springframework.security.access.annotation.Secured
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
@@ -17,23 +18,32 @@ import javax.validation.Valid
 @RequestMapping(value = ["/user"])
 class UserController(
         private val userRepository: UserRepository,
-        private val userService: UserService,
         private val tokenProvider: JwtTokenProvider
         ) {
 
     @GetMapping("/get_list")
-    //@Secured("ROLE_ADMIN")
+    @Secured("ROLE_ADMIN")
     fun getUsers(): ModelAndView {
         return ModelAndView("user_form", "users", userRepository.findAll())
     }
 
     @PostMapping("/update")
-    fun updateUser(@Valid @RequestBody userModel: UserModel, bindingResult: BindingResult): BaseModel<Any> {
+    fun updateUser(@RequestHeader("Authorization") token: String
+                   , @Valid @RequestBody userRequest: UserUpdateRequest
+                   , bindingResult: BindingResult): BaseModel<Any> {
         if (bindingResult.hasErrors() && bindingResult.fieldErrors[0].defaultMessage != null)
             return BaseModel(400, bindingResult.fieldErrors[0].defaultMessage!!)
-        return if (userService.save(userModel))
+        val phoneNumber = tokenProvider.phoneNumberFromJWT(token.substring(7))
+        val userModel = userRepository.findByPhoneNumber(phoneNumber)
+        return if (userModel == null) BaseModel(400, "Не удалось заполучить профиль пользователя. Возможно, он был удален")
+        else {
+            userModel.firstName = userRequest.firstName
+            userModel.lastName = userRequest.lastName
+            userModel.patronymic = userRequest.patronymic
+            userModel.city = userRequest.city
+            userRepository.save(userModel)
             BaseModel(200, "Профиль успешно изменен")
-        else BaseModel(400, "Номер телефона уже используется")
+        }
     }
 
     @GetMapping("/get")

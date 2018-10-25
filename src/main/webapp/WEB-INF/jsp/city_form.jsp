@@ -16,45 +16,36 @@
             text-align: center;
             border-bottom: 1px solid #ddd;
         }
-    </style>
-    <script>
-        function loadModalWindow() {
-            // open your window here
-            window.open("city_dialog_add.jsp");
+        thead {
+            background-color: #f5eee2;
+            color: #504f4d;
+            font-weight: bold;
+            cursor: default;
         }
-    </script>
+    </style>
 </head>
 <body>
 <button type="button" name="back" onclick="window.history.back()"><- Назад</button>
 <h3>Текущие города</h3>
-<button onclick="loadModalWindow()">Добавить город</button>
-<table>
-    <tr>
-        <td>id</td>
 
-        <td>Название</td>
+<button onclick="window.open('city_dialog',null,'height=200,width=500,status=yes,toolbar=no,menubar=no,location=no');">Добавить город</button>
+<table>
+    <thead>
+    <tr>
+        <th>id</th>
+        <th>Название</th>
     </tr>
+    </thead>
+    <tbody>
     <c:forEach items="${cities}" var="cityModel">
         <tr>
             <td><c:out value="${cityModel.id}"/></td>
             <td><c:out value="${cityModel.name}"/></td>
         </tr>
     </c:forEach>
+    </tbody>
 </table>
 </body>
 <script>
-    $(function() {
-
-        $("#dialog").dialog({
-            autoOpen: false,
-            modal: true
-        });
-
-        $("#myButton").on("click", function(e) {
-            e.preventDefault();
-            $("#dialog").dialog("open");
-        });
-
-    });
 </script>
 </html>

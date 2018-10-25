@@ -4,7 +4,8 @@ import me.flashka.web.taxi.repository.HistoryRepository
 import me.flashka.web.taxi.repository.OfferRepository
 import me.flashka.web.taxi.repository.ParticipantRepository
 import me.flashka.web.taxi.repository.UserRepository
-import me.flashka.web.taxi.repository.enums.HistoryStatus
+import me.flashka.web.taxi.repository.enums.TransactionStatus
+import me.flashka.web.taxi.repository.enums.TransactionType
 import me.flashka.web.taxi.repository.enums.WinnerStatus
 import me.flashka.web.taxi.repository.model.HistoryModel
 import me.flashka.web.taxi.util.RandomCollection
@@ -56,8 +57,8 @@ class TimerService(
                     scheduler.schedule(runnable, it.endDate)
                     logger.info("endDate is {}", it.endDate)
                     return
-                }
-                selectWinner(it.id)
+                } else if (it.endDate.before(Date()))
+                    selectWinner(it.id)
             }
         }
     }
@@ -73,15 +74,16 @@ class TimerService(
 
             offerModel.winnerStatus = WinnerStatus.WINNER_EXISTS
 
-            userModel.balance = userModel.balance!! + offerModel.win!!
+            userModel.balance = userModel.balance + offerModel.win!!
             userModel.weight = 0.5
             userRepository.save(userModel)
 
             participantModel.winner = true
+            participantModel.date = Date()
             participantRepository.save(participantModel)
 
             historyRepository.save(HistoryModel(userModel, offerModel.win, offerId.toString()
-                    , null, HistoryStatus.OFFER_WINNER))
+                    , participantModel.id.toString(), 0.0, TransactionStatus.SUCCESSFUL, TransactionType.WINNER))
         } else offerModel.winnerStatus = WinnerStatus.WINNER_DOESNT_EXIST
         offerRepository.save(offerModel)
     }

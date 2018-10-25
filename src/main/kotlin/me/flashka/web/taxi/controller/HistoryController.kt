@@ -30,17 +30,10 @@ class HistoryController(
         else BaseModel(400, "Не удалось заполучить историю пользователя. Возможно, он был удален")
     }
 
-    @GetMapping("/get_list_admin")
-    //@Secured("ROLE_ADMIN")
+    @GetMapping("/history_form")
+    @Secured("ROLE_ADMIN")
     fun getHistory(): ModelAndView {
         return ModelAndView("history_form", "histories", historyRepository.findAll())
-    }
-
-    @PostMapping("/set")
-    fun setUserHistory(@Valid @RequestBody historyModel: HistoryModel, bindingResult: BindingResult): BaseModel<Any> {
-        if (bindingResult.hasErrors() && bindingResult.fieldErrors[0].defaultMessage != null)
-            return BaseModel(400, bindingResult.fieldErrors[0].defaultMessage!!)
-        return BaseModel(200, "Операция добавлена в историю")
     }
 
 }

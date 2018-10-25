@@ -1,6 +1,7 @@
 package me.flashka.web.taxi.repository
 
-import me.flashka.web.taxi.repository.enums.HistoryStatus
+import me.flashka.web.taxi.repository.enums.TransactionStatus
+import me.flashka.web.taxi.repository.enums.TransactionType
 import java.util.*
 
 interface HistoryOnly {
@@ -10,6 +11,7 @@ interface HistoryOnly {
     fun getNumber(): String?
     fun getCommission(): Int
     fun getDate(): Date
-    fun getHistoryStatus(): HistoryStatus?
+    fun getTransactionStatus(): TransactionStatus?
+    fun getTransactionType(): TransactionType?
 
 }
