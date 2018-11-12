@@ -3,13 +3,19 @@ package me.flashka.web.taxi.controller
 import me.flashka.web.taxi.repository.CityRepository
 import me.flashka.web.taxi.repository.model.CityModel
 import me.flashka.web.taxi.repository.model.BaseModel
+import org.slf4j.LoggerFactory
 import org.springframework.security.access.annotation.Secured
 import org.springframework.ui.ModelMap
 import org.springframework.validation.BindingResult
 import org.springframework.validation.FieldError
 import org.springframework.validation.ObjectError
 import org.springframework.web.bind.annotation.*
+import org.springframework.web.context.request.RequestContextHolder
+import org.springframework.web.context.request.ServletRequestAttributes
 import org.springframework.web.servlet.ModelAndView
+import java.net.InetAddress
+import java.util.logging.Logger
+import javax.servlet.http.HttpServletRequest
 import javax.validation.Valid
 
 @RestController()

@@ -18,8 +18,8 @@ data class PaySystemModel (
         val gateCommissionRub: String? = (payeerPaySystemModel?.gateCommission as? LinkedHashMap<String, String>)?.get("RUB"),
         val name: String? = payeerPaySystemModel?.name,
         var commission: Double? = payeerPaySystemModel?.commission_site_percent,
-        val sumMinRub: String? = payeerPaySystemModel?.sum_min?.RUB,
-        val sumMaxRub: String? = payeerPaySystemModel?.sum_max?.RUB,
+        val sumMinRub: Double? = payeerPaySystemModel?.sum_min?.RUB,
+        val sumMaxRub: Double? = payeerPaySystemModel?.sum_max?.RUB,
 
         @JsonIgnore
         @Column(insertable = true, updatable = false)

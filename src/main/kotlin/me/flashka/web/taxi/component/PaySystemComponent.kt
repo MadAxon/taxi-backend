@@ -3,6 +3,7 @@ package me.flashka.web.taxi.component
 import me.flashka.web.taxi.repository.PaySystemRepository
 import me.flashka.web.taxi.repository.model.PaySystemModel
 import me.flashka.web.taxi.repository.response.PaySystemsResponse
+import org.slf4j.LoggerFactory
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Component
 import org.springframework.util.LinkedMultiValueMap
 import org.springframework.util.MultiValueMap
 import org.springframework.web.client.RestTemplate
+import javax.transaction.Transactional
 
 @Component
 class PaySystemComponent(
@@ -18,6 +20,7 @@ class PaySystemComponent(
 ) {
 
     @Scheduled(cron = "0 0 0 * * mon")
+    @Transactional
     fun syncPaySystems() {
         val headers = HttpHeaders()
         headers.contentType = MediaType.APPLICATION_FORM_URLENCODED

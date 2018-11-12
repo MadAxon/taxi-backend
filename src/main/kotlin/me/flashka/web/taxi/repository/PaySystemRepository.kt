@@ -4,4 +4,7 @@ import me.flashka.web.taxi.repository.model.PaySystemModel
 import org.springframework.data.jpa.repository.JpaRepository
 
 interface PaySystemRepository : JpaRepository<PaySystemModel, Long> {
+
+    fun findAllByActive(active: Boolean): List<PaySystemModel>
+
 }

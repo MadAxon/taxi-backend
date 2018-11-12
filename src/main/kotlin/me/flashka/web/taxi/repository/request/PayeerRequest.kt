@@ -9,7 +9,7 @@ data class PayeerRequest (
         val m_shop: String,
 
         @field:NotNull(message = "Не указан m_orderid")
-        var m_orderid: String? = null,
+        var m_orderid: String?,
 
         @field:NotNull(message = "Не указан m_amount")
         var m_amount: String? = null,
@@ -26,9 +26,9 @@ data class PayeerRequest (
 
 
     constructor(orderId: String?, amount: String?, desc: String)
-            : this("659138305", orderId, amount, "RUB", desc, "FAzofhF5GRaXiJAS") {
+            : this("659138305", orderId, amount, "RUB", desc, "AfrEQ2x9EETsVvz") {
         this.m_desc = base64String(desc)
-        m_sign = DigestUtils.sha256Hex("$m_shop:$orderId:$amount:$m_curr:$desc:$key")
+        m_sign = DigestUtils.sha256Hex("$m_shop:$orderId:$amount:$m_curr:$m_desc:$key").toUpperCase()
     }
 
 

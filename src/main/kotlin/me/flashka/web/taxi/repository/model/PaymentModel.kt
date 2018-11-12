@@ -10,18 +10,15 @@ data class PaymentModel (
         @GeneratedValue
         val id: Long = 0,
 
-        var mOperationId: String? = null,
-
         @ManyToOne
         @JoinColumn(name = "userId")
-        var user: UserModel? = null,
+        val user: UserModel?,
 
-        var amount: Double? = null,
+        @ManyToOne
+        @JoinColumn(name = "offerId")
+        val offer: OfferModel?
+) {
 
-        var mDesc: String = "",
-        var sign: String? = null,
+        constructor(user: UserModel?, offer: OfferModel?) : this(0, user, offer)
 
-        @Transient
-        var transactionType: TransactionType? = TransactionType.PURCHASE
-
-        )
+}

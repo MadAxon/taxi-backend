@@ -10,13 +10,12 @@ data class SmsModel (
         @GeneratedValue
         val id: Long = 0,
 
-        val date: Date = Date(),
-
-        @OneToOne
-        @JoinColumn(name = "userId")
-        val user: UserModel? = null,
-
-        val code: String? = null
+        val untilExpiredDate: Date = Date(System.currentTimeMillis() + 900000), // 15 min
+        val phoneNumber: String? = null,
+        val code: String? = null,
+        val ip: String? = null
 ) {
-    constructor(user: UserModel?, code: String?) : this(0, Date(), user, code)
+    constructor(phoneNumber: String?, code: String?) : this(0, Date(), phoneNumber, code)
+
+    constructor(phoneNumber: String?, code: String?, ip: String?) : this(0, Date(), phoneNumber, code, ip)
 }

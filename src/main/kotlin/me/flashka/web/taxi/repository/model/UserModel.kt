@@ -22,14 +22,14 @@ data class UserModel(
         @field:Pattern(regexp = "^[+\\s]?[7-8\\s]?\\(?([0-9]{3})\\)?[-.\\s]?([0-9]{3})[-.\\s]?([0-9]{4})\$"
                 , message = "Неправильный формат номера")
         @field:NotNull(message = "Укажите номер телефона")
-        var phoneNumber: String?,
+        var phoneNumber: String? = null,
 
         @field:NotNull(message = "Укажите Ваше имя")
-        var firstName: String?,
+        var firstName: String? = null,
 
         @field:NotNull(message = "Укажите Вашу фамилию")
-        var lastName: String?,
-        var patronymic: String? = "",
+        var lastName: String? = null,
+        var patronymic: String? = null,
 
         @ManyToOne
         @JoinColumn(name = "cityId")
@@ -42,7 +42,7 @@ data class UserModel(
         @field:NotNull(message = "Укажите Ваш номер машины")
         @field:Pattern(regexp = "^[А-Яа-я][\\s]*[0-9]{3}[\\s]*[А-Яа-я]{2}[\\s]*[0-9]{2,3}\$"
                 , message = "Неверный формат номера машины")
-        var carNumber: String?,
+        var carNumber: String? = null,
 
         @JsonIgnore
         @JsonSetter
@@ -58,10 +58,11 @@ data class UserModel(
         @JsonIgnore
         var weight: Double = 1.0,
 
-        var balance: Double = 0.0) {
+        var balance: Double = 0.0,
 
-    constructor() : this(0, "", "", "", ""
-            , CityModel(0, ""), Date(), "", "")
+        @Transient
+        @JsonIgnore
+        var code: String? = null) {
 
     @Transient
     @JsonIgnore

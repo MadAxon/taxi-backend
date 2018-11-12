@@ -24,13 +24,13 @@ data class PayeerPaySystemModel(
 
     data class PayeerGateModel(
             @JsonProperty("USD")
-            val USD: String?,
+            val USD: Double?,
 
             @JsonProperty("RUB")
-            val RUB: String?,
+            val RUB: Double?,
 
             @JsonProperty("EUR")
-            val EUR: String?
+            val EUR: Double?
     )
 
     data class AccountNumber (

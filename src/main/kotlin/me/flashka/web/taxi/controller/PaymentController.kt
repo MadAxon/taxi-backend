@@ -6,16 +6,16 @@ import me.flashka.web.taxi.repository.enums.PaymentType
 import me.flashka.web.taxi.repository.enums.TransactionStatus
 import me.flashka.web.taxi.repository.enums.TransactionType
 import me.flashka.web.taxi.repository.model.*
-import me.flashka.web.taxi.repository.request.PayeerNotifyRequest
 import me.flashka.web.taxi.repository.request.PayeerRequest
 import me.flashka.web.taxi.repository.request.PaymentRequest
 import org.apache.commons.codec.digest.DigestUtils
+import org.slf4j.LoggerFactory
 import org.springframework.validation.BindingResult
 import org.springframework.web.bind.annotation.*
 import java.util.*
 import javax.validation.Valid
-import org.springframework.web.context.request.RequestContextHolder
-import org.springframework.web.context.request.ServletRequestAttributes
+import java.text.DecimalFormat
+import javax.servlet.http.HttpServletRequest
 
 
 @RestController
@@ -25,9 +25,11 @@ class PaymentController(
         private val offerRepository: OfferRepository,
         private val userRepository: UserRepository,
         private val tokenProvider: JwtTokenProvider,
-        private val paymentRepository: PaymentRepository,
-        private val historyRepository: HistoryRepository
+        private val historyRepository: HistoryRepository,
+        private val paymentRepository: PaymentRepository
 ) {
+
+    private val logger = LoggerFactory.getLogger(PaymentController::class.java)
 
     @PostMapping("/apply")
     fun payWithBalance(@RequestHeader("Authorization") token: String,
@@ -50,15 +52,17 @@ class PaymentController(
             PaymentType.BALANCE -> {
                 if (userModel.balance >= offerModel.payment!!) {
                     userModel.balance = userModel.balance - offerModel.payment
-                    return registerParticipant(offerModel, participantModel)
+                    return registerParticipant(participantModel)
                 } else return BaseModel(400, "Недостаточно средств на балансе")
             }
             PaymentType.VISA -> {
-                if (offerModel.payment == 0.0) return registerParticipant(offerModel, participantModel)
-                else return BaseModel(200, "", generatePayeerUrl(offerModel, participantModel))
+                if (offerModel.payment == 0.0) return registerParticipant(participantModel)
+                else return BaseModel(200,
+                        "",
+                        generatePayeerUrl(participantModel))
             }
             else -> {
-                if (offerModel.payment == 0.0) return registerParticipant(offerModel, participantModel)
+                if (offerModel.payment == 0.0) return registerParticipant(participantModel)
                 else return BaseModel(100, "Произведите оплату для участия в акции")
             }
         }
@@ -66,10 +70,10 @@ class PaymentController(
     }
 
     @PostMapping("/notify")
-    fun notify(@RequestParam body: Map<String, String>): BaseModel<Any> {
-        val request = (RequestContextHolder.currentRequestAttributes() as ServletRequestAttributes)
-                .request
+    fun notify(@RequestParam body: Map<String, String>, request: HttpServletRequest): BaseModel<Any> {
         val ip = request.remoteAddr
+        logger.error("-----------------------------------------NOTIFY------------------------------------")
+        logger.error("ip = $ip")
         if (ip == "185.71.65.92" || ip == "185.71.65.189" || ip == "149.202.17.210") {
             val m_operation_id = body["m_operation_id"]
             val m_operation_ps = body["m_operation_ps"]
@@ -85,10 +89,22 @@ class PaymentController(
             val summa_out = body["summa_out"]
             val key = "FAzofhF5GRaXiJAS"
 
+            logger.error("m_operation_id = $m_operation_id")
+            logger.error("m_operation_ps = $m_operation_ps")
+            logger.error("m_operation_date = $m_operation_date")
+            logger.error("m_operation_pay_date = $m_operation_pay_date")
+            logger.error("m_shop = $m_shop")
+            logger.error("m_orderid = $m_orderid")
+            logger.error("m_amount = $m_amount")
+            logger.error("m_curr = $m_curr")
+            logger.error("m_desc = $m_desc")
+            logger.error("m_status = $m_status")
+            logger.error("m_sign = $m_sign")
+            logger.error("summa_out = $summa_out")
+
             val m_sign_hash: String? = DigestUtils.sha256Hex("$m_operation_id:$m_operation_ps:$m_operation_date:$m_operation_pay_date:$m_shop:$m_orderid:$m_amount:$m_curr:$m_desc:$m_status:$key")
 
-            if (body["m_operation_id"]?.isNotEmpty()!!
-                    && m_sign?.isNotEmpty()!!) {
+            if (body["m_operation_id"]?.isNotEmpty()!! && m_sign?.isNotEmpty()!!) {
                 val paymentModel = paymentRepository.findById(m_orderid?.toLong()!!).get()
                 if (m_sign == m_sign_hash
                         && m_status == "success") {
@@ -100,34 +116,33 @@ class PaymentController(
                             if (summa_out != null && m_amount != null) summa_out.toDouble() - m_amount.toDouble() else 0.0,
                             TransactionStatus.SUCCESSFUL,
                             TransactionType.PURCHASE))
+                    logger.error("-----------------------------------------200, success------------------------------------")
+                    logger.error("-----------------------------------------END------------------------------------")
                     return BaseModel(200, "Оплата успешно завершена")
                 }
             }
         }
+        logger.error("-----------------------------------------400, denied------------------------------------")
+        logger.error("-----------------------------------------END------------------------------------")
         return BaseModel(400, "Payment denied!")
     }
 
-    fun registerParticipant(offerModel: OfferModel, participantModel: ParticipantModel): BaseModel<String> {
+    fun registerParticipant(participantModel: ParticipantModel): BaseModel<String> {
         if (participantModel.user!!.weight < 1)
             participantModel.user.weight += 0.1
         participantRepository.save(participantModel)
-        offerModel.participants++
-        offerRepository.save(offerModel)
+        participantModel.offer?.participants = participantModel.offer?.participants!! + 1
+        offerRepository.save(participantModel.offer)
         return BaseModel(200, "Вы успешно зарегистрировались в акции")
     }
 
-    fun generatePayeerUrl(offerModel: OfferModel, participantModel: ParticipantModel): String {
-        val paymentModel = PaymentModel()
+    fun generatePayeerUrl(participantModel: ParticipantModel): String {
+        val paymentModel = paymentRepository.save(PaymentModel(participantModel.user, participantModel.offer))
         val payeerRequest = PayeerRequest(
                 paymentModel.id.toString(),
-                offerModel.id.toString(),
-                "Оплата для участия в акции №${offerModel.id}")
-        paymentModel.user = participantModel.user
-        paymentModel.amount = offerModel.payment
-        paymentModel.mDesc = payeerRequest.m_desc
-        paymentModel.sign = payeerRequest.m_sign
-        paymentRepository.save(paymentModel)
-        return "https://payeer.com/merchant/?m_shop=${payeerRequest.m_shop}&m_orderid=${payeerRequest.m_orderid}&m_amount=${payeerRequest.m_amount}&m_curr=${payeerRequest.m_curr}&m_desc=${payeerRequest.m_desc}&m_sign=${payeerRequest.m_sign}"
+                DecimalFormat("#.00").format(participantModel.offer?.payment),
+                "Оплата для участия в акции №${participantModel.offer?.id}")
+        return "https://payeer.com/merchant?m_shop=${payeerRequest.m_shop}&m_orderid=${payeerRequest.m_orderid}&m_amount=${payeerRequest.m_amount}&m_curr=${payeerRequest.m_curr}&m_desc=${payeerRequest.m_desc}&m_sign=${payeerRequest.m_sign}"
     }
 
 }

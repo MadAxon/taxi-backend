@@ -42,7 +42,7 @@ class WebSecurityConfig(
                 ?.and()
                 ?.authorizeRequests()
                 ?.antMatchers(
-                        "/resources/**", "/auth/**",
+                        "/html/**", "/auth/**",
                         "/city/get_list",
                         "/payment/notify",
                         "/payment/success",

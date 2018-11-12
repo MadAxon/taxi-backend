@@ -32,7 +32,7 @@ data class OfferModel(
 
         @field:NotNull(message = "Укажите сумму участия в акции")
         @field:Min(0, message = "Сумма участия не может быть отрицательной")
-        val payment: Double? = null,
+        val payment: Double? = 0.0,
 
         @ManyToOne
         @JoinColumn(name = "cityId")

@@ -1,18 +1,14 @@
 package me.flashka.web.taxi.controller
 
 import me.flashka.web.taxi.jwt.JwtTokenProvider
-import me.flashka.web.taxi.repository.HistoryOnly
 import me.flashka.web.taxi.repository.HistoryRepository
 import me.flashka.web.taxi.repository.UserRepository
-import me.flashka.web.taxi.repository.dto.FrontOfferDTO
+import me.flashka.web.taxi.repository.dto.FrontHistoryDTO
 import me.flashka.web.taxi.repository.model.BaseModel
 import me.flashka.web.taxi.repository.model.HistoryModel
-import me.flashka.web.taxi.repository.model.OfferModel
 import org.springframework.security.access.annotation.Secured
-import org.springframework.validation.BindingResult
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.servlet.ModelAndView
-import javax.validation.Valid
 
 @RestController
 @RequestMapping(value = ["/history"])
@@ -23,11 +19,14 @@ class HistoryController(
 ) {
 
     @GetMapping("/get_list")
-    fun getUserHistory(@RequestHeader("Authorization") token: String): BaseModel<List<HistoryOnly>> {
+    fun getUserHistory(@RequestHeader("Authorization") token: String): BaseModel<List<FrontHistoryDTO>> {
         val phoneNumber = tokenProvider.phoneNumberFromJWT(token.substring(7))
         val userModel = userRepository.findByPhoneNumber(phoneNumber)
-        return if (userModel != null) BaseModel(200, "", historyRepository.findAllByUser(userModel))
-        else BaseModel(400, "Не удалось заполучить историю пользователя. Возможно, он был удален")
+        val histories = ArrayList<FrontHistoryDTO>()
+        historyRepository.findAllByUser(userModel!!).forEach {
+            histories.add(FrontHistoryDTO(it))
+        }
+        return BaseModel(200, "", histories)
     }
 
     @GetMapping("/history_form")
